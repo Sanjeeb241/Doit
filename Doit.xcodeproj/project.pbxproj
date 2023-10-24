@@ -8,10 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		AA455F322AE6CD1300016054 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA455F312AE6CD1300016054 /* HomeVC.swift */; };
+		AA455F362AE6CE5E00016054 /* ToDoItemsTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA455F342AE6CE5E00016054 /* ToDoItemsTVC.swift */; };
+		AA455F372AE6CE5E00016054 /* ToDoItemsTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA455F352AE6CE5E00016054 /* ToDoItemsTVC.xib */; };
+		AA455F392AE6D60900016054 /* AppEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA455F382AE6D60900016054 /* AppEnums.swift */; };
+		AA455F3B2AE6DA4500016054 /* ToDoItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA455F3A2AE6DA4500016054 /* ToDoItems.swift */; };
 		AA4F44C52AE6A9E300A9C6CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4F44C42AE6A9E300A9C6CA /* AppDelegate.swift */; };
 		AA4F44CC2AE6A9E300A9C6CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA4F44CA2AE6A9E300A9C6CA /* Main.storyboard */; };
 		AA4F44CE2AE6A9E400A9C6CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA4F44CD2AE6A9E400A9C6CA /* Assets.xcassets */; };
 		AA4F44D12AE6A9E400A9C6CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA4F44CF2AE6A9E400A9C6CA /* LaunchScreen.storyboard */; };
+		AAB7D4562AE7907800AEBFF8 /* ViewAllTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB7D4542AE7907800AEBFF8 /* ViewAllTVC.swift */; };
+		AAB7D4572AE7907800AEBFF8 /* ViewAllTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAB7D4552AE7907800AEBFF8 /* ViewAllTVC.xib */; };
 		B80CD7B46F81486B995C6DDC /* Pods_Doit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48C60D2669B380F8CEBE9331 /* Pods_Doit.framework */; };
 /* End PBXBuildFile section */
 
@@ -20,12 +26,18 @@
 		775E00019CFB63EB15373B4E /* Pods-Doit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Doit.release.xcconfig"; path = "Target Support Files/Pods-Doit/Pods-Doit.release.xcconfig"; sourceTree = "<group>"; };
 		983A936D7D99823DB595FFA8 /* Pods-Doit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Doit.debug.xcconfig"; path = "Target Support Files/Pods-Doit/Pods-Doit.debug.xcconfig"; sourceTree = "<group>"; };
 		AA455F312AE6CD1300016054 /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
+		AA455F342AE6CE5E00016054 /* ToDoItemsTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemsTVC.swift; sourceTree = "<group>"; };
+		AA455F352AE6CE5E00016054 /* ToDoItemsTVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ToDoItemsTVC.xib; sourceTree = "<group>"; };
+		AA455F382AE6D60900016054 /* AppEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnums.swift; sourceTree = "<group>"; };
+		AA455F3A2AE6DA4500016054 /* ToDoItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItems.swift; sourceTree = "<group>"; };
 		AA4F44C12AE6A9E300A9C6CA /* Doit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Doit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA4F44C42AE6A9E300A9C6CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA4F44CB2AE6A9E300A9C6CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AA4F44CD2AE6A9E400A9C6CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA4F44D02AE6A9E400A9C6CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA4F44D22AE6A9E400A9C6CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AAB7D4542AE7907800AEBFF8 /* ViewAllTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAllTVC.swift; sourceTree = "<group>"; };
+		AAB7D4552AE7907800AEBFF8 /* ViewAllTVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ViewAllTVC.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +64,7 @@
 		AA455F2D2AE6CCB800016054 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				AA455F3A2AE6DA4500016054 /* ToDoItems.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -74,6 +87,7 @@
 		AA455F302AE6CCD200016054 /* App Common */ = {
 			isa = PBXGroup;
 			children = (
+				AA455F382AE6D60900016054 /* AppEnums.swift */,
 			);
 			path = "App Common";
 			sourceTree = "<group>";
@@ -81,6 +95,10 @@
 		AA455F332AE6CD7B00016054 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				AA455F342AE6CE5E00016054 /* ToDoItemsTVC.swift */,
+				AA455F352AE6CE5E00016054 /* ToDoItemsTVC.xib */,
+				AAB7D4542AE7907800AEBFF8 /* ViewAllTVC.swift */,
+				AAB7D4552AE7907800AEBFF8 /* ViewAllTVC.xib */,
 			);
 			path = XIBs;
 			sourceTree = "<group>";
@@ -106,10 +124,10 @@
 		AA4F44C32AE6A9E300A9C6CA /* Doit */ = {
 			isa = PBXGroup;
 			children = (
-				AA455F332AE6CD7B00016054 /* XIBs */,
 				AA4F44D22AE6A9E400A9C6CA /* Info.plist */,
 				AA4F44C42AE6A9E300A9C6CA /* AppDelegate.swift */,
 				AA455F302AE6CCD200016054 /* App Common */,
+				AA455F332AE6CD7B00016054 /* XIBs */,
 				AA455F2F2AE6CCCC00016054 /* View */,
 				AA455F2E2AE6CCC200016054 /* ViewModel */,
 				AA455F2D2AE6CCB800016054 /* Model */,
@@ -190,6 +208,8 @@
 			files = (
 				AA4F44D12AE6A9E400A9C6CA /* LaunchScreen.storyboard in Resources */,
 				AA4F44CE2AE6A9E400A9C6CA /* Assets.xcassets in Resources */,
+				AA455F372AE6CE5E00016054 /* ToDoItemsTVC.xib in Resources */,
+				AAB7D4572AE7907800AEBFF8 /* ViewAllTVC.xib in Resources */,
 				AA4F44CC2AE6A9E300A9C6CA /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -244,6 +264,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA4F44C52AE6A9E300A9C6CA /* AppDelegate.swift in Sources */,
+				AA455F362AE6CE5E00016054 /* ToDoItemsTVC.swift in Sources */,
+				AAB7D4562AE7907800AEBFF8 /* ViewAllTVC.swift in Sources */,
+				AA455F3B2AE6DA4500016054 /* ToDoItems.swift in Sources */,
+				AA455F392AE6D60900016054 /* AppEnums.swift in Sources */,
 				AA455F322AE6CD1300016054 /* HomeVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,11 +425,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Doit/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Do It";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -431,11 +458,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Doit/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Do It";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
