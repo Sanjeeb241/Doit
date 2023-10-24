@@ -45,6 +45,11 @@ class HomeVC: UIViewController {
         tblView.register(UINib(nibName: TABLEVIEW_CELLS.ViewAllTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue)
         plusBtn.layer.cornerRadius = 25
     }
+    
+    @IBAction func clickToAdd(_ sender: Any) {
+        self.pushViewController(AddToDoVC.self, storyboardName: "Main", identifier: "AddToDoVC", animated: true)
+    }
+    
 }
 
 
