@@ -16,7 +16,7 @@ final class ToDoItems : NSObject {
     var date : String
     var time : String
     var isReminder : Bool
-    var priority: Priority = .low
+    var priority: Priority = .none
     var isPinned: Bool
     
     init(title: String, isCompleted: Bool, note: String, isRepeat: Bool, location: String, date: String, time: String, isReminder: Bool, priority: Priority, isPinned: Bool) {
@@ -31,11 +31,4 @@ final class ToDoItems : NSObject {
         self.priority = priority
         self.isPinned = isPinned
     }
-}
-
-
-enum Priority: Int {
-    case low = 0
-    case medium = 1
-    case high = 2
 }

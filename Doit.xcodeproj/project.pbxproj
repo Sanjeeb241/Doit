@@ -21,6 +21,10 @@
 		AAB7D4592AE7A0B300AEBFF8 /* AddToDoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB7D4582AE7A0B300AEBFF8 /* AddToDoVC.swift */; };
 		AAB7D45B2AE7A46A00AEBFF8 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB7D45A2AE7A46A00AEBFF8 /* Utility.swift */; };
 		AAB7D45D2AE7DD3600AEBFF8 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB7D45C2AE7DD3600AEBFF8 /* Extensions.swift */; };
+		AAFAE1432AE8DB3200D855C6 /* CategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFAE1422AE8DB3200D855C6 /* CategoryVC.swift */; };
+		AAFAE1452AE8E95900D855C6 /* AddCategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFAE1442AE8E95900D855C6 /* AddCategoryVC.swift */; };
+		AAFAE1482AE8ECA400D855C6 /* CategoryIconsCV.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFAE1462AE8ECA400D855C6 /* CategoryIconsCV.swift */; };
+		AAFAE1492AE8ECA400D855C6 /* CategoryIconsCV.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAFAE1472AE8ECA400D855C6 /* CategoryIconsCV.xib */; };
 		B80CD7B46F81486B995C6DDC /* Pods_Doit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48C60D2669B380F8CEBE9331 /* Pods_Doit.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +48,10 @@
 		AAB7D4582AE7A0B300AEBFF8 /* AddToDoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoVC.swift; sourceTree = "<group>"; };
 		AAB7D45A2AE7A46A00AEBFF8 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		AAB7D45C2AE7DD3600AEBFF8 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		AAFAE1422AE8DB3200D855C6 /* CategoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryVC.swift; sourceTree = "<group>"; };
+		AAFAE1442AE8E95900D855C6 /* AddCategoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryVC.swift; sourceTree = "<group>"; };
+		AAFAE1462AE8ECA400D855C6 /* CategoryIconsCV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIconsCV.swift; sourceTree = "<group>"; };
+		AAFAE1472AE8ECA400D855C6 /* CategoryIconsCV.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryIconsCV.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +95,8 @@
 			children = (
 				AA455F312AE6CD1300016054 /* HomeVC.swift */,
 				AAB7D4582AE7A0B300AEBFF8 /* AddToDoVC.swift */,
+				AAFAE1422AE8DB3200D855C6 /* CategoryVC.swift */,
+				AAFAE1442AE8E95900D855C6 /* AddCategoryVC.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -108,6 +118,8 @@
 				AA455F352AE6CE5E00016054 /* ToDoItemsTVC.xib */,
 				AAB7D4542AE7907800AEBFF8 /* ViewAllTVC.swift */,
 				AAB7D4552AE7907800AEBFF8 /* ViewAllTVC.xib */,
+				AAFAE1462AE8ECA400D855C6 /* CategoryIconsCV.swift */,
+				AAFAE1472AE8ECA400D855C6 /* CategoryIconsCV.xib */,
 			);
 			path = XIBs;
 			sourceTree = "<group>";
@@ -220,6 +232,7 @@
 				AA455F372AE6CE5E00016054 /* ToDoItemsTVC.xib in Resources */,
 				AAB7D4572AE7907800AEBFF8 /* ViewAllTVC.xib in Resources */,
 				AA4F44CC2AE6A9E300A9C6CA /* Main.storyboard in Resources */,
+				AAFAE1492AE8ECA400D855C6 /* CategoryIconsCV.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,15 +285,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAFAE1432AE8DB3200D855C6 /* CategoryVC.swift in Sources */,
 				AAB7D4592AE7A0B300AEBFF8 /* AddToDoVC.swift in Sources */,
 				AAB7D45D2AE7DD3600AEBFF8 /* Extensions.swift in Sources */,
 				AA4F44C52AE6A9E300A9C6CA /* AppDelegate.swift in Sources */,
 				AA455F362AE6CE5E00016054 /* ToDoItemsTVC.swift in Sources */,
+				AAFAE1452AE8E95900D855C6 /* AddCategoryVC.swift in Sources */,
 				AAB7D4562AE7907800AEBFF8 /* ViewAllTVC.swift in Sources */,
 				AAB7D45B2AE7A46A00AEBFF8 /* Utility.swift in Sources */,
 				AA455F3B2AE6DA4500016054 /* ToDoItems.swift in Sources */,
 				AA455F392AE6D60900016054 /* AppEnums.swift in Sources */,
 				AA455F322AE6CD1300016054 /* HomeVC.swift in Sources */,
+				AAFAE1482AE8ECA400D855C6 /* CategoryIconsCV.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

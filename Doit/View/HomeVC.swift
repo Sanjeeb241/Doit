@@ -85,6 +85,8 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
         //        cell.reminderBtn.setTitle(todoItems[indexPath.row].time, for: .normal)
         //        cell.locationBtn.setTitle(todoItems[indexPath.row].location, for: .normal)
                 switch listInfo.priority {
+                case .none:
+                    cell.flagImg.isHidden = true
                 case .low:
                     cell.flagImg.tintColor = UIColor.blue
                     break
