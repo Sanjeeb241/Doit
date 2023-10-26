@@ -23,6 +23,7 @@ extension UIViewController {
 
 extension UIView {
     public func addTapGesture(action: @escaping () -> Void) {
+        self.endEditing(true)
         let tapgesture = TapGestureActionBlock(target: self, action: #selector(self.handleTap(_:)))
         tapgesture.action = action
         tapgesture.numberOfTapsRequired = 1
@@ -34,4 +35,9 @@ extension UIView {
         sender.action!()
     }
 
+    func animate() {
+        UIView.animate(withDuration: 0.35) {
+            self.layoutIfNeeded()
+        }
+    }
 }

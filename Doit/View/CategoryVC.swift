@@ -11,17 +11,12 @@ protocol CategorySelectionDelegate {
     func didCategorySelect(name: String, icon: String)
 }
 
+var categories: [Category] = [Category]()
+
 class CategoryVC: UIViewController {
-    
-    
+
     
     @IBOutlet weak var tblView: UITableView!
-    
-    var categories: [String: String] = [
-        "Home": "house",
-        "Work": "briefcase",
-        "Personal": "person"
-    ]
 
     
     var delegate: CategorySelectionDelegate?
@@ -46,8 +41,8 @@ class CategoryVC: UIViewController {
 }
 
 extension CategoryVC: NewCategoryAddDelegate {
-    func didAddNewCategory(name: String, icon: String) {
-        self.categories[name] = icon
+    func didAddNewCategory(category: Category) {
+        categories.append(category)
         self.tblView.reloadData()
     }
 }
@@ -60,20 +55,19 @@ extension CategoryVC : UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tblView.dequeueReusableCell(withIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue, for: indexPath) as! ViewAllTVC
-        let listInfo = categories.keys.sorted()
-        let name = listInfo[indexPath.row]
+        let listInfo = categories[indexPath.row]
+        let name = listInfo.name
         
         cell.nameLbl.text = name
-        cell.iconImage.image = UIImage(systemName: categories[name] ?? "")
+        cell.iconImage.image = UIImage(systemName: listInfo.icon)
         cell.arrowBtn.isHidden = true
         cell.selectionStyle = .none
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let category = categories.keys.sorted()
-        let name = category[indexPath.row]
-        self.delegate?.didCategorySelect(name: name, icon: categories[name]!)
+        let name = categories[indexPath.row].name
+        self.delegate?.didCategorySelect(name: name, icon: categories[indexPath.row].icon)
         self.navigationController?.popViewController(animated: true)
     }
     

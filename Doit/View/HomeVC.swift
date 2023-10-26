@@ -104,6 +104,7 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
             }
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue, for: indexPath) as! ViewAllTVC
+            cell.iconImage.isHidden = true
             cell.selectionStyle = .none
             return cell
         }

@@ -9,7 +9,7 @@ import UIKit
 
 
 protocol NewCategoryAddDelegate {
-    func didAddNewCategory(name: String, icon: String)
+    func didAddNewCategory(category: Category)
 }
 class AddCategoryVC: UIViewController {
     
@@ -21,8 +21,9 @@ class AddCategoryVC: UIViewController {
     @IBOutlet weak var iconsCVHeight: NSLayoutConstraint!
     
     
-    private let categoryIcons = ["person","briefcase","house","cart","bag","creditcard","heart",
-                         "book","airplane","wineglass","gamecontroller","sportscourt","paintbrush","film","music.note","book","person.2","calendar","gift","checkmark","bolt.circle","leaf","car","folder",
+    private let categoryIcons = ["person","work","briefcase","house","cart","bag","creditcard","heart",
+                         "book","airplane","wineglass","gamecontroller","sportscourt","paintbrush","film","music.note","book","person.2",
+                         "calendar","gift","checkmark","bolt.circle","leaf","car","folder",
                          "laptopcomputer","paintpalette","sun.max","figure.child","hammer","flame","trash","dollarsign.square",
                          "gift","dollarsign.circle","pills","mouth","staroflife","percent","tray","hand.raised","envelope",
                          "calendar.badge.clock"
@@ -51,9 +52,6 @@ class AddCategoryVC: UIViewController {
             categoryIconData.append(["isSelected": false, "name": icon])
         }
         
-        // Add border width, will need for Empty warning animation
-        titleBackView.layer.borderWidth = 1
-        iconsCV.layer.borderWidth = 1
         updateIconsCVHeight()
     }
     
@@ -62,11 +60,11 @@ class AddCategoryVC: UIViewController {
         self.view.endEditing(true)
         guard let name = nameTxt.text else { return }
         if name.isEmpty {
-            addEmptyWarning(isName: true)
+            showEmptyWarning(isName: true)
         } else if self.selectedIcon.isEmpty {
-            addEmptyWarning(isName: false)
+            showEmptyWarning(isName: false)
         } else {
-            self.delegate?.didAddNewCategory(name: name, icon: selectedIcon)
+            self.delegate?.didAddNewCategory(category: Category(id: UUID().uuidString, name: name, icon: selectedIcon))
             self.navigationController?.popViewController(animated: true)
         }
     }
@@ -117,23 +115,47 @@ extension AddCategoryVC : UICollectionViewDataSource, UICollectionViewDelegate, 
 }
 
 extension AddCategoryVC {
-    func addEmptyWarning(isName: Bool) {
+    func showEmptyWarning(isName: Bool) {
+        // Add border width, will need for Empty warning animation
+        let borderColorKeyPath = "borderColor"
+        let borderWidthKeyPath = "borderWidth"
         
+        if isName {
+            titleBackView.layer.borderWidth = 1
+        } else {
+            iconsCV.layer.borderWidth = 1
+        }
+
         // Create a CABasicAnimation for the border color
-        let borderColorAnimation = CABasicAnimation(keyPath: "borderColor")
+        let borderColorAnimation = CABasicAnimation(keyPath: borderColorKeyPath)
         borderColorAnimation.fromValue = UIColor.red.cgColor
         borderColorAnimation.toValue = isName ? titleBackView.layer.borderColor : iconsCV.layer.borderColor
         borderColorAnimation.duration = 0.25
         borderColorAnimation.autoreverses = true
-        borderColorAnimation.repeatCount = 2 // Blink thrice
+        borderColorAnimation.repeatCount = 3 // Blink thrice
         borderColorAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+        // Use CATransaction to perform actions after the animation
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            // Animation has completed; remove border width
+            if isName {
+                self.titleBackView.layer.borderWidth = 0
+                self.nameTxt.becomeFirstResponder()
+            } else {
+                self.iconsCV.layer.borderWidth = 0
+            }
+        }
 
         // Apply the animation to the view's layer
         if isName {
             titleBackView.layer.add(borderColorAnimation, forKey: "borderColorAnimation")
-        }else{
+        } else {
             iconsCV.layer.add(borderColorAnimation, forKey: "borderColorAnimation")
         }
+
+        // Commit the transaction
+        CATransaction.commit()
     }
 
 }

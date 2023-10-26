@@ -35,8 +35,7 @@ class AddToDoVC: UIViewController {
     
     @IBOutlet weak var categoryBtn: UIButton!
     @IBOutlet weak var categoryIcon: UIImageView!
-    
-    
+
     @IBOutlet weak var addBtn: UIButton!
     
     
@@ -44,6 +43,8 @@ class AddToDoVC: UIViewController {
     private var isTimeView : Bool = false // Show/Hide time view
     private var categories : [String] = []
     
+    private var date : Date = Date()
+    private var time : Date = Date()
     private var priority : Priority = .none
 
     override func viewDidLoad() {
@@ -51,6 +52,7 @@ class AddToDoVC: UIViewController {
         
         setupUI()
     }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         titleTxt.becomeFirstResponder()
@@ -58,63 +60,98 @@ class AddToDoVC: UIViewController {
     
     func setupUI() {
         self.title = "Details"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(clickToDone))
-        addBtn.addTarget(self, action: #selector(clickToDone), for: .touchUpInside)
-        self.titleBackView.layer.cornerRadius = 10
-        self.dateTimeBackView.layer.cornerRadius = 10
-        self.priorityBackView.layer.cornerRadius = 10
-        self.datePickerView.isHidden = true
-        timePickerView.isHidden = true
-        repeatView.isHidden = true
-        timeLbl.isHidden = true
+        
+        titleBackView.layer.cornerRadius = 10
+        dateTimeBackView.layer.cornerRadius = 10
+        priorityBackView.layer.cornerRadius = 10
+        repeatView.layer.cornerRadius = 10
+        
+        datePickerView.minimumDate = Date()
+        datePickerView.isHidden = true
         dateLbl.isHidden = true
-        self.dateHeaderView.addTapGesture {
+        datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        
+        timePickerView.isHidden = true
+        timeLbl.isHidden = true
+        timeLbl.text = "22:00"
+        timePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        timePickerView.minuteInterval = 05
+
+        repeatView.isHidden = true
+
+        dateHeaderView.addTapGesture {
             if !self.dateSwitchBtn.isOn {
-                return
+                return // Do nothing when Switch Button is off
             }else {
-                self.isDateView = !self.isDateView
-                self.datePickerView.isHidden =  self.isDateView
-                self.isTimeView = false
+                self.datePickerView.isHidden = !self.datePickerView.isHidden
+                self.timePickerView.isHidden = true
             }
+            self.view.animate()
 
         }
         
-        self.timeHeaderView.addTapGesture {
+        timeHeaderView.addTapGesture {
             if !self.timeSwitchBtn.isOn {
                 return
             } else {
-                self.isTimeView = !self.isTimeView
-                self.timePickerView.isHidden = self.isTimeView
-                self.isDateView = false
+                self.timePickerView.isHidden = !self.timePickerView.isHidden
+                self.datePickerView.isHidden = true
             }
+            self.view.animate()
 
         }
+        
         setupPriorityInteractionMenu()
         addNotePlaceholder()
     }
     
+    @objc func datePickerValueChanged(_ datePicker: UIDatePicker) {
+        if datePicker == datePickerView {
+            
+            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "EEEE, d'ᵗʰ' MMM yyyy"
+            dateFormatter.dateStyle = .full
+            self.date = datePicker.date
+            self.dateLbl.text = dateFormatter.string(from: datePicker.date)
+        } else {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "h:mm a"
+            self.timeLbl.text = dateFormatter.string(from: timePickerView.date)
+        }
+    }
+
+    
     @IBAction func selectDateTime(_ sender: UISwitch) {
         self.view.endEditing(true) // Pop down the keyboard
-        if sender == dateSwitchBtn {
-            isDateView = !isDateView
-            isTimeView = false
-        } else {
-            isTimeView = !isTimeView
-            isDateView = false
-        }
-        dateSwitchBtn.setOn(isDateView, animated: true)
-        timeSwitchBtn.setOn(isTimeView, animated: true)
-        self.dateLbl.isHidden = !self.isDateView
-        self.datePickerView.isHidden = !self.isDateView
-        self.timeLbl.isHidden = !self.isTimeView
-        self.timePickerView.isHidden = !self.isTimeView
-        self.repeatView.isHidden = !self.isTimeView
-
+        self.setupDateTimeView(sender)
     }
     
-    
-    @objc func clickToDone() {
-        self.navigationController?.popViewController(animated: true)
+    func setupDateTimeView(_ sender: UISwitch) {
+        
+        if sender == dateSwitchBtn {
+            isDateView = dateSwitchBtn.isOn
+            dateSwitchBtn.setOn(isDateView, animated: true)
+            if !dateSwitchBtn.isOn {
+                timeSwitchBtn.setOn(false, animated: true)
+            }
+            datePickerView.isHidden = !dateSwitchBtn.isOn
+            timePickerView.isHidden = true
+            date = datePickerView.date
+        } else {
+            isTimeView = timeSwitchBtn.isOn
+            timeSwitchBtn.setOn(isTimeView, animated: true)
+            if timeSwitchBtn.isOn {
+                dateSwitchBtn.setOn(true, animated: true)
+            }
+            timePickerView.isHidden = !timeSwitchBtn.isOn
+            self.datePickerView.isHidden = true
+            time = timePickerView.date
+        }
+        
+        self.dateLbl.isHidden = !dateSwitchBtn.isOn
+        self.timeLbl.isHidden = !timeSwitchBtn.isOn
+        self.repeatView.isHidden = !timeSwitchBtn.isOn
+        self.view.animate()
     }
     
     @IBAction func clickToAddCategory(_ sender: Any) {
@@ -163,13 +200,9 @@ extension AddToDoVC : UITextFieldDelegate, UITextViewDelegate, CategorySelection
         self.noteTxtView.addSubview(label)
         label.centerYAnchor.constraint(equalTo: noteTxtView.centerYAnchor).isActive = true
         
-        // Add a UITapGestureRecognizer to the noteTxtView
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        noteTxtView.addGestureRecognizer(tapGestureRecognizer)
-    }
-
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
-        noteTxtView.becomeFirstResponder() // When the user taps on noteTxtView, show the keyboard
+        noteTxtView.addTapGesture {
+            self.noteTxtView.becomeFirstResponder()
+        }
     }
     
     func removePlaceHolder() {

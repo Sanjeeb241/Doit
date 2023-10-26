@@ -32,3 +32,14 @@ final class ToDoItems : NSObject {
         self.isPinned = isPinned
     }
 }
+
+struct Category : Codable {
+    var id : String
+    var name, icon: String
+    
+    init(id: String, name: String, icon: String) {
+        self.id = id
+        self.name = name
+        self.icon = icon
+    }
+}
