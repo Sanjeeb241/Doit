@@ -15,35 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        print(DataBaseManager.shared.getURL())
-        initializeStoryboard()
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let intialViewController = storyboard.instantiateViewController(withIdentifier: "HomeVC")
+        let navigationController = UINavigationController(rootViewController: intialViewController)
+        self.window?.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
         return true
     }
     
     
     func initializeStoryboard() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        // Create an instance of the UITabBarController
-        let tabBarController = UITabBarController()
 
-        let homeViewController = storyboard.instantiateViewController(withIdentifier: "HomeVC")
-        let categoriesViewController = storyboard.instantiateViewController(withIdentifier: "CategoriesVC")
-        
-        homeViewController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
-        categoriesViewController.tabBarItem = UITabBarItem(title: "Categories", image: UIImage(systemName: "tray"), selectedImage: UIImage(systemName: "tray.fill"))
-        
-        let homeNavigationController = UINavigationController(rootViewController: homeViewController)
-        let secondNavigationController = UINavigationController(rootViewController: categoriesViewController)
-        
-        let viewControllers = [homeNavigationController, secondNavigationController]
-        tabBarController.viewControllers = viewControllers
-
-        self.window?.rootViewController = tabBarController
-        self.window?.makeKeyAndVisible()
     }
 
 
 }
-
-
 
