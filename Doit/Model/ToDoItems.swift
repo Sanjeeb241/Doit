@@ -7,39 +7,69 @@
 
 import Foundation
 
-final class ToDoItems : NSObject {
-    var title : String
-    var isCompleted : Bool
-    var note : String
-    var isRepeat : Bool
-    var location : String
-    var date : String
-    var time : String
-    var isReminder : Bool
-    var priority: Priority = .none
-    var isPinned: Bool
+import RealmSwift
+class ToDoItems : Object {
+    @Persisted var key : String = ""
+    let toDoItems = List<ToDoItem>()
+}
+
+class ToDoItem: Object {
+    @Persisted var key : String = ""
+    @Persisted var title: String = ""
+    @Persisted var isCompleted: Bool = false
+    @Persisted var note: String = ""
+    @Persisted var isRepeat: Bool = false
+    @Persisted var location: String = ""
+    @Persisted var taskDate: Date?
+    @Persisted var time: Date?
+    @Persisted var taskPriority: Int = Priority.none.rawValue // Store the raw value as an Int
+    @Persisted var isPinned: Bool = false
+    @Persisted var categoryName : String = ""
+    @Persisted var categoryIcon : String = ""
+    @Persisted var categoryId : ObjectId
+
+    var priority: Priority {
+        get {
+            return Priority(rawValue: taskPriority) ?? .none
+        }
+        set {
+            taskPriority = newValue.rawValue
+        }
+    }
     
-    init(title: String, isCompleted: Bool, note: String, isRepeat: Bool, location: String, date: String, time: String, isReminder: Bool, priority: Priority, isPinned: Bool) {
+    convenience init(key: String, title: String, isCompleted: Bool, note: String, isRepeat: Bool, location: String, taskDate: Date? = nil, time: Date? = nil, taskPriority: Int, isPinned: Bool, categoryName: String, categoryIcon: String, categoryId: ObjectId) {
+        self.init()
+        self.key = key
         self.title = title
         self.isCompleted = isCompleted
         self.note = note
         self.isRepeat = isRepeat
         self.location = location
-        self.date = date
+        self.taskDate = taskDate
         self.time = time
-        self.isReminder = isReminder
-        self.priority = priority
+        self.taskPriority = taskPriority
         self.isPinned = isPinned
+        self.categoryName = categoryName
+        self.categoryIcon = categoryIcon
+        self.categoryId = categoryId
     }
 }
 
-struct Category : Codable {
-    var id : String
-    var name, icon: String
-    
-    init(id: String, name: String, icon: String) {
-        self.id = id
+class Categories : Object {
+    static let shared = Categories()
+    var categories = List<Category>()
+}
+
+class Category: Object {
+    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted var name: String = ""
+    @Persisted var icon: String = ""
+
+    convenience init(name: String, icon: String) {
+        self.init()
         self.name = name
         self.icon = icon
     }
 }
+
+

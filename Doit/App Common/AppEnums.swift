@@ -21,8 +21,22 @@ enum COLLECTIONVIEW_CELLS : String {
 // MARK: Prioity
 enum Priority: Int {
     case none = 0
-    case low = 1
-    case medium = 2
-    case high = 3
+    case normal = 1
+    case high = 2
+}
+
+enum TASK_KEYS : String {
+    case PINNED = "PINNED"
+    case TODAY = "TODAY"
+    case TOMORROW = "TOMORROW"
+    case OVERDUE = "OVERDUE"
+    case ALL = "ALL"
+}
+
+enum DateComparison : String {
+    case today = "Today"
+    case tomorrow = "Tomorrow"
+    case week
+    case other
 }
 

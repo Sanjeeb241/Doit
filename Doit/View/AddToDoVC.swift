@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol AddNewTaskDelegate {
+    func didAddNewTask(key : TASK_KEYS, newTask : ToDoItems)
+}
+
 class AddToDoVC: UIViewController {
     
     
@@ -35,6 +39,8 @@ class AddToDoVC: UIViewController {
     
     @IBOutlet weak var categoryBtn: UIButton!
     @IBOutlet weak var categoryIcon: UIImageView!
+    @IBOutlet weak var categoryView: UIView!
+    
 
     @IBOutlet weak var addBtn: UIButton!
     
@@ -43,43 +49,47 @@ class AddToDoVC: UIViewController {
     private var isTimeView : Bool = false // Show/Hide time view
     private var categories : [String] = []
     
-    private var date : Date = Date()
-    private var time : Date = Date()
+    private var taskDate : Date? = nil
+    private var taskTime : Date? = nil
+    private var isRepeat : Bool = false
     private var priority : Priority = .none
+    private var category : Category = Category()
+    private var isPinned : Bool = false
+    
+    
+    var delegate : AddNewTaskDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        titleTxt.becomeFirstResponder()
-    }
     
     func setupUI() {
         self.title = "Details"
+        titleTxt.becomeFirstResponder()
+        noteTxtView.inputAccessoryView = view.addDismissButton(view: noteTxtView)
         
         titleBackView.layer.cornerRadius = 10
         dateTimeBackView.layer.cornerRadius = 10
         priorityBackView.layer.cornerRadius = 10
         repeatView.layer.cornerRadius = 10
-        
-        datePickerView.minimumDate = Date()
-        datePickerView.isHidden = true
+                
         dateLbl.isHidden = true
-        datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
-        
         timePickerView.isHidden = true
         timeLbl.isHidden = true
-        timeLbl.text = "22:00"
+        repeatView.isHidden = true
+        
+        datePickerView.minimumDate = Date()
+        timePickerView.minimumDate = Date()
+        datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        timeLbl.text = getTaskTime(time: taskTime)
         timePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         timePickerView.minuteInterval = 05
 
-        repeatView.isHidden = true
 
         dateHeaderView.addTapGesture {
+            self.view.dismissKeyboard()
             if !self.dateSwitchBtn.isOn {
                 return // Do nothing when Switch Button is off
             }else {
@@ -91,6 +101,7 @@ class AddToDoVC: UIViewController {
         }
         
         timeHeaderView.addTapGesture {
+            self.view.dismissKeyboard()
             if !self.timeSwitchBtn.isOn {
                 return
             } else {
@@ -101,6 +112,11 @@ class AddToDoVC: UIViewController {
 
         }
         
+        dateSwitchBtn.setOn(true, animated: true)
+        isDateView = dateSwitchBtn.isOn
+        selectDateTime(dateSwitchBtn)
+        datePickerView.isHidden = true
+        
         setupPriorityInteractionMenu()
         addNotePlaceholder()
     }
@@ -108,21 +124,30 @@ class AddToDoVC: UIViewController {
     @objc func datePickerValueChanged(_ datePicker: UIDatePicker) {
         if datePicker == datePickerView {
             
-            let dateFormatter = DateFormatter()
-//            dateFormatter.dateFormat = "EEEE, d'ᵗʰ' MMM yyyy"
-            dateFormatter.dateStyle = .full
-            self.date = datePicker.date
-            self.dateLbl.text = dateFormatter.string(from: datePicker.date)
+            switch checkDate(datePicker.date) {
+            case .today:
+                self.dateLbl.text = "Today"
+                break
+            case .tomorrow:
+                self.dateLbl.text = "Tomorrow"
+                break
+            case .other, .week:
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .full
+                self.dateLbl.text = dateFormatter.string(from: datePicker.date)
+            }
+            self.taskDate = datePicker.date
         } else {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "h:mm a"
             self.timeLbl.text = dateFormatter.string(from: timePickerView.date)
+            self.taskTime = datePicker.date
         }
     }
 
     
     @IBAction func selectDateTime(_ sender: UISwitch) {
-        self.view.endEditing(true) // Pop down the keyboard
+        view.dismissKeyboard()
         self.setupDateTimeView(sender)
     }
     
@@ -136,7 +161,7 @@ class AddToDoVC: UIViewController {
             }
             datePickerView.isHidden = !dateSwitchBtn.isOn
             timePickerView.isHidden = true
-            date = datePickerView.date
+            taskDate = datePickerView.date
         } else {
             isTimeView = timeSwitchBtn.isOn
             timeSwitchBtn.setOn(isTimeView, animated: true)
@@ -145,7 +170,8 @@ class AddToDoVC: UIViewController {
             }
             timePickerView.isHidden = !timeSwitchBtn.isOn
             self.datePickerView.isHidden = true
-            time = timePickerView.date
+            taskTime = timePickerView.date
+            timeLbl.text = getTaskTime(time: taskTime)
         }
         
         self.dateLbl.isHidden = !dateSwitchBtn.isOn
@@ -154,20 +180,83 @@ class AddToDoVC: UIViewController {
         self.view.animate()
     }
     
+    @IBAction func clickToRepeat(_ sender: Any) {
+        view.dismissKeyboard()
+        isRepeat = !isRepeat
+    }
+    
+    
     @IBAction func clickToAddCategory(_ sender: Any) {
-        self.view.endEditing(true)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
+        view.dismissKeyboard()
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CategoriesVC") as! CategoriesVC
         vc.delegate = self
+        vc.isFromAddTask = true
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    @IBAction func clickToAdd(_ sender: Any) {
+        view.dismissKeyboard()
+        
+        guard let name = titleTxt.text else { return }
+        guard let note = noteTxtView.text else { return }
+        
+        let isRepeat = isRepeat
+        let priority = priority
+        let category = category
+        
+        
+        if (name.isEmpty || name.count < 2){
+            titleBackView.showEmptyWarning()
+        } else if taskDate == nil {
+            dateHeaderView.showEmptyWarning()
+        } else if category.name.isEmpty {
+            categoryView.showEmptyWarning()
+        }  else {
+            var key = TASK_KEYS.ALL
+            switch checkDate(taskDate) {
+            case .today:
+                key = .TODAY
+                break
+            case .tomorrow:
+                key = .TOMORROW
+                break
+            default:
+                key = .ALL
+                break
+            }
+            
+            var todoItem = ToDoItem()
+            todoItem.key = key.rawValue
+            todoItem.title = name
+            todoItem.isCompleted = false
+            todoItem.note = note
+            todoItem.isRepeat = isRepeat
+            todoItem.location = ""
+            todoItem.taskDate = getUTCDateInLocalString(date: taskDate) ?? taskDate
+            todoItem.time = getUTCTimeInLocalString(date: taskTime) ?? taskTime
+            todoItem.priority = priority
+            todoItem.isPinned = isPinned
+            todoItem.categoryId = category.id
+            todoItem.categoryIcon = category.icon
+            todoItem.categoryName = category.name
+            
+            DataBaseManager.shared.add(todoItem)
+//            self.delegate?.didAddNewTask(key : key, newTask: todoItem)
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        
+    }
+    
 
 }
 
 extension AddToDoVC : UITextFieldDelegate, UITextViewDelegate, CategorySelectionDelegate {
     
-    func didCategorySelect(name: String, icon: String) {
-        self.categoryBtn.setTitle(name, for: .normal)
-        self.categoryIcon.image = UIImage(systemName: icon)
+    func didCategorySelect(category : Category) {
+        self.category = category
+        self.categoryBtn.setTitle(category.name, for: .normal)
+        self.categoryIcon.image = UIImage(systemName: category.icon)
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -184,6 +273,13 @@ extension AddToDoVC : UITextFieldDelegate, UITextViewDelegate, CategorySelection
         noteTxtView.sizeToFit()
         noteTxtViewHeight.constant = noteTxtView.contentSize.height
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.dismissKeyboard()
+        return true
+    }
+    
+    
     
     // Placeholder text for Note Text View
     func addNotePlaceholder() {
@@ -202,6 +298,7 @@ extension AddToDoVC : UITextFieldDelegate, UITextViewDelegate, CategorySelection
         
         noteTxtView.addTapGesture {
             self.noteTxtView.becomeFirstResponder()
+            self.removePlaceHolder()
         }
     }
     
@@ -222,15 +319,9 @@ extension AddToDoVC {
             self.setupPriorityInteractionMenu()
         }
         
-        let lowAction = UIAction(title: "Low", image: UIImage(systemName: "flag.fill")?.withTintColor(.blue, renderingMode: .alwaysOriginal), state: (self.priority == .low) ? .on : .off) { _ in
-            self.priorityBtn.setTitle("Low", for: .normal)
-            self.priority = .low
-            self.setupPriorityInteractionMenu()
-        }
-        
-        let mediumAction = UIAction(title: "Medium", image: UIImage(systemName: "flag.fill")?.withTintColor(.orange, renderingMode: .alwaysOriginal), state: (self.priority == .medium) ? .on : .off) { _ in
-            self.priorityBtn.setTitle("Medium", for: .normal)
-            self.priority = .medium
+        let normalAction = UIAction(title: "Normal", image: UIImage(systemName: "flag"), state: (self.priority == .normal) ? .on : .off) { _ in
+            self.priorityBtn.setTitle("Normal", for: .normal)
+            self.priority = .normal
             self.setupPriorityInteractionMenu()
         }
         
@@ -241,9 +332,8 @@ extension AddToDoVC {
         }
         
         
-        
         // create group of menus for separator. Make sure displayInline is selected, other wise it will create sub menu
-        let priorityOptions = UIMenu(title: "",options: .displayInline, children: [lowAction, mediumAction, highAction])
+        let priorityOptions = UIMenu(title: "",options: .displayInline, children: [normalAction, highAction])
         
         
         // place as per separator

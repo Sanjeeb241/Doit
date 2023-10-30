@@ -15,26 +15,25 @@ class ToDoItemsTVC: UITableViewCell {
     
     @IBOutlet weak var descLbl: UILabel!
     
-//    @IBOutlet weak var dateBtn: UIButton!
-//    
-//    @IBOutlet weak var reminderBtn: UIButton!
-//    
-//    @IBOutlet weak var locationBtn: UIButton!
+    @IBOutlet weak var dateBtn: UIButton!
+    @IBOutlet weak var timeBtn : UIButton!
     
-    @IBOutlet weak var flagImg: UIImageView!
+    @IBOutlet weak var flagBtn: UIButton!
+    @IBOutlet weak var categoryBtn : UIButton!
     
     @IBOutlet weak var repeatBtn: UIButton!
-    
-    
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
-//        dateBtn.layer.cornerRadius = 5
-//        dateBtn.layer.backgroundColor = UIColor.systemTeal.cgColor
-//        reminderBtn.layer.cornerRadius = 5
-//        reminderBtn.layer.backgroundColor = UIColor.systemTeal.cgColor
-//        locationBtn.layer.cornerRadius = 5
-//        locationBtn.layer.backgroundColor = UIColor.systemTeal.cgColor
+        
+        dateBtn.layer.cornerRadius = 5
+        timeBtn.layer.cornerRadius = 5
+        repeatBtn.layer.cornerRadius = 5
+        
+        dateBtn.backgroundColor = .systemGray4.withAlphaComponent(0.7)
+        timeBtn.backgroundColor = .systemGray4.withAlphaComponent(0.7)
+        repeatBtn.backgroundColor = .systemGray4.withAlphaComponent(0.7)
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

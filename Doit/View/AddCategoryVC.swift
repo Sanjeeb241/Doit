@@ -6,11 +6,10 @@
 //
 
 import UIKit
+import Realm
+import RealmSwift
 
 
-protocol NewCategoryAddDelegate {
-    func didAddNewCategory(category: Category)
-}
 class AddCategoryVC: UIViewController {
     
     
@@ -21,17 +20,18 @@ class AddCategoryVC: UIViewController {
     @IBOutlet weak var iconsCVHeight: NSLayoutConstraint!
     
     
-    private let categoryIcons = ["person","work","briefcase","house","cart","bag","creditcard","heart",
-                         "book","airplane","wineglass","gamecontroller","sportscourt","paintbrush","film","music.note","book","person.2",
+    private let categoryIcons = ["person","briefcase","house","cart","creditcard","heart",
+                         "book","airplane","wineglass","gamecontroller","sportscourt","paintbrush","film","music.note","person.2",
                          "calendar","gift","checkmark","bolt.circle","leaf","car","folder",
-                         "laptopcomputer","paintpalette","sun.max","figure.child","hammer","flame","trash","dollarsign.square",
-                         "gift","dollarsign.circle","pills","mouth","staroflife","percent","tray","hand.raised","envelope",
-                         "calendar.badge.clock"
+                         "laptopcomputer","sun.max","figure.child","hammer","flame","trash",
+                         "dollarsign.circle","pills","mouth","staroflife","percent","tray","hand.raised","envelope"
     ]
     
     var categoryIconData : [[String: Any]] = []
     var selectedIcon : String = ""
-    var delegate: NewCategoryAddDelegate?
+    var isEdit : Bool = false
+    var category : Category = Category()
+    var categories : Results<Category>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,8 +42,8 @@ class AddCategoryVC: UIViewController {
         super.viewDidAppear(animated)
         nameTxt.becomeFirstResponder()
     }
+    
     func setupUI() {
-        title = "New Category"
         titleBackView.layer.cornerRadius = 10
         iconsCV.layer.cornerRadius = 10
         iconsCV.register(UINib(nibName: COLLECTIONVIEW_CELLS.CategoryIconsCV.rawValue, bundle: nil), forCellWithReuseIdentifier: COLLECTIONVIEW_CELLS.CategoryIconsCV.rawValue)
@@ -52,6 +52,20 @@ class AddCategoryVC: UIViewController {
             categoryIconData.append(["isSelected": false, "name": icon])
         }
         
+        if isEdit {
+            title = "Edit Category"
+            nameTxt.text = category.name
+            // Loop through categoryIconData to find the selected item
+            if let selectedItemIndex = categoryIconData.firstIndex(where: { $0["name"] as? String == category.icon }) {
+                categoryIconData[selectedItemIndex]["isSelected"] = true
+                self.selectedIcon = categoryIconData[selectedItemIndex]["name"] as? String ?? ""
+            }
+        } else {
+            title = "New Category"
+        }
+        self.view.addTapGesture {
+            self.view.endEditing(true)
+        }
         updateIconsCVHeight()
     }
     
@@ -59,16 +73,52 @@ class AddCategoryVC: UIViewController {
     @IBAction func clickToDone(_ sender: Any) {
         self.view.endEditing(true)
         guard let name = nameTxt.text else { return }
-        if name.isEmpty {
-            showEmptyWarning(isName: true)
+        if name.isEmpty || name.count < 2 {
+            titleBackView.showEmptyWarning()
         } else if self.selectedIcon.isEmpty {
-            showEmptyWarning(isName: false)
+            iconsCV.showEmptyWarning()
         } else {
-            self.delegate?.didAddNewCategory(category: Category(id: UUID().uuidString, name: name, icon: selectedIcon))
-            self.navigationController?.popViewController(animated: true)
+            let category = Category()
+            category.name = name
+            category.icon = selectedIcon
+            
+            // A category with the same name or icon already exists
+            let alert = UIAlertController(title: "Duplicate Category", message: "A category with the same name or icon already exists.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            
+            // Get all categories excluding current editing category for check
+            let excludedCurrentCategories = categories.filter({ $0.id != self.category.id })
+            
+            if isEdit {
+                if excludedCurrentCategories.first(where: { $0.name == name || $0.icon == selectedIcon }) != nil {
+                    self.present(alert, animated: true, completion: nil)
+                } else {
+                    if (name != self.category.name || selectedIcon != self.category.icon) {
+                        category.id = self.category.id
+                        DataBaseManager.shared.updateCategory(self.category, newCategory: category)
+                    }
+                    self.navigationController?.popViewController(animated: true)
+                }
+
+            } else {
+                if categories.first(where: { $0.name == name || $0.icon == selectedIcon }) != nil {
+                    self.present(alert, animated: true, completion: nil)
+                } else {
+                    DataBaseManager.shared.add(category)
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+
         }
     }
     
+}
+
+extension AddCategoryVC : UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.dismissKeyboard()
+        return true
+    }
 }
 
 
@@ -112,50 +162,4 @@ extension AddCategoryVC : UICollectionViewDataSource, UICollectionViewDelegate, 
         iconsCVHeight.constant = iconsCV.contentSize.height
     }
     
-}
-
-extension AddCategoryVC {
-    func showEmptyWarning(isName: Bool) {
-        // Add border width, will need for Empty warning animation
-        let borderColorKeyPath = "borderColor"
-        let borderWidthKeyPath = "borderWidth"
-        
-        if isName {
-            titleBackView.layer.borderWidth = 1
-        } else {
-            iconsCV.layer.borderWidth = 1
-        }
-
-        // Create a CABasicAnimation for the border color
-        let borderColorAnimation = CABasicAnimation(keyPath: borderColorKeyPath)
-        borderColorAnimation.fromValue = UIColor.red.cgColor
-        borderColorAnimation.toValue = isName ? titleBackView.layer.borderColor : iconsCV.layer.borderColor
-        borderColorAnimation.duration = 0.25
-        borderColorAnimation.autoreverses = true
-        borderColorAnimation.repeatCount = 3 // Blink thrice
-        borderColorAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-
-        // Use CATransaction to perform actions after the animation
-        CATransaction.begin()
-        CATransaction.setCompletionBlock {
-            // Animation has completed; remove border width
-            if isName {
-                self.titleBackView.layer.borderWidth = 0
-                self.nameTxt.becomeFirstResponder()
-            } else {
-                self.iconsCV.layer.borderWidth = 0
-            }
-        }
-
-        // Apply the animation to the view's layer
-        if isName {
-            titleBackView.layer.add(borderColorAnimation, forKey: "borderColorAnimation")
-        } else {
-            iconsCV.layer.add(borderColorAnimation, forKey: "borderColorAnimation")
-        }
-
-        // Commit the transaction
-        CATransaction.commit()
-    }
-
 }
