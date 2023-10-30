@@ -123,18 +123,21 @@ class AddToDoVC: UIViewController {
     
     @objc func datePickerValueChanged(_ datePicker: UIDatePicker) {
         if datePicker == datePickerView {
-            
             switch checkDate(datePicker.date) {
             case .today:
                 self.dateLbl.text = "Today"
+                self.timePickerView.minimumDate = Date()
                 break
             case .tomorrow:
                 self.dateLbl.text = "Tomorrow"
+                self.timePickerView.minimumDate = nil
                 break
             case .other, .week:
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .full
                 self.dateLbl.text = dateFormatter.string(from: datePicker.date)
+                self.timePickerView.minimumDate = nil
+                break
             }
             self.taskDate = datePicker.date
         } else {
@@ -225,7 +228,7 @@ class AddToDoVC: UIViewController {
                 break
             }
             
-            var todoItem = ToDoItem()
+            let todoItem = ToDoItem()
             todoItem.key = key.rawValue
             todoItem.title = name
             todoItem.isCompleted = false
