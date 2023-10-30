@@ -8,7 +8,11 @@
 import UIKit
 
 class ViewAllTVC: UITableViewCell {
-
+    
+    
+    @IBOutlet weak var iconImage: UIImageView!
+    @IBOutlet weak var nameLbl: UILabel!
+    @IBOutlet weak var arrowBtn: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
