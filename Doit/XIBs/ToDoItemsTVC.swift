@@ -10,19 +10,15 @@ import UIKit
 class ToDoItemsTVC: UITableViewCell {
     
     @IBOutlet weak var checkBtn: UIButton!
-    
     @IBOutlet weak var titleLbl: UILabel!
-    
     @IBOutlet weak var descLbl: UILabel!
-    
     @IBOutlet weak var dateBtn: UIButton!
     @IBOutlet weak var timeBtn : UIButton!
-    
     @IBOutlet weak var flagBtn: UIButton!
     @IBOutlet weak var categoryBtn : UIButton!
-    
     @IBOutlet weak var repeatBtn: UIButton!
-
+    @IBOutlet weak var noteHeight: NSLayoutConstraint!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -39,7 +35,6 @@ class ToDoItemsTVC: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
     }
     
 }

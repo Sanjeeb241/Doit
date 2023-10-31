@@ -8,6 +8,7 @@
 import UIKit
 import Realm
 import RealmSwift
+import UserNotifications
 
 class HomeVC: UIViewController {
     
@@ -16,27 +17,24 @@ class HomeVC: UIViewController {
     @IBOutlet weak var tblView: UITableView!
     @IBOutlet weak var plusBtn: UIButton!
     
-//    private var pinnedTasks : Results<ToDoItems>!
-//    private var todayTasks : Results<ToDoItems>!
-//    private var tomorrowTasks : Results<ToDoItems>!
-//    private var allTasks : Results<ToDoItems>!
-//    private var overdueTasks : Results<ToDoItems>!
-//    private var todoItems : [[String : Results<ToDoItems>]]!
-    
     private var todoItems : Results<ToDoItem>!
     var notificationToken: NotificationToken?
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupConfig()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    func setupConfig(){
+        plusBtn.layer.cornerRadius = 25
+        tblView.register(UINib(nibName: TABLEVIEW_CELLS.ToDoItemsTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ToDoItemsTVC.rawValue)
+        tblView.register(UINib(nibName: TABLEVIEW_CELLS.ViewAllTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue)
+
+        todoItems = DataBaseManager.shared.realm.objects(ToDoItem.self)
         
         notificationToken = todoItems.observe({ [weak self] (changes: RealmCollectionChange) in
             guard let tableView = self?.tblView else { return }
+            self!.view.setupEmptyView(text: "Relax! Nothing to do.", isShow: self!.todoItems.isEmpty)
             switch changes {
             case .initial:
                 // Results are now populated and can be accessed without blocking the UI
@@ -60,15 +58,11 @@ class HomeVC: UIViewController {
                 fatalError("\(error)")
             }
         })
-    }
-    
-    func setupConfig(){
-        plusBtn.layer.cornerRadius = 25
-        tblView.register(UINib(nibName: TABLEVIEW_CELLS.ToDoItemsTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ToDoItemsTVC.rawValue)
-        tblView.register(UINib(nibName: TABLEVIEW_CELLS.ViewAllTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue)
-        todoItems = DataBaseManager.shared.realm.objects(ToDoItem.self)
         
+        NotificationManager.shared.requestAuthorization()
+
     }
+
     
     @IBAction func clickToAdd(_ sender: Any) {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddToDoVC") as! AddToDoVC
@@ -84,7 +78,9 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
         return todoItems.count
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         
         let listInfo = todoItems[indexPath.row]
         
@@ -94,28 +90,6 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
         
         let taskCell = tblView.dequeueReusableCell(withIdentifier: TABLEVIEW_CELLS.ToDoItemsTVC.rawValue, for: indexPath) as! ToDoItemsTVC
         taskCell.checkBtn.tag = indexPath.row
-
-//        if var sectionItems = sectionInfo.first?.value {
-//            sectionItems.sort {
-//                if let firstTaskDate = $0.taskDate, let secondTaskDate = $1.taskDate {
-//                    return firstTaskDate < secondTaskDate
-//                } else if $0.taskDate != nil {
-//                    return true
-//                } else if $1.taskDate != nil {
-//                    return false
-//                } else {
-//                    // Handle cases where both items have no taskDate
-//                    if let firstTaskTime = $0.time, let secondTaskTime = $1.time {
-//                        return firstTaskTime < secondTaskTime
-//                    } else if $0.time != nil {
-//                        return true
-//                    } else if $1.time != nil {
-//                        return false
-//                    } else {
-//                        return $0.priority.rawValue < $1.priority.rawValue
-//                    }
-//                }
-//            }
         
         taskCell.descLbl.isHidden = (listInfo.note == "")
         taskCell.dateBtn.isHidden = (listInfo.taskDate == nil)
@@ -126,7 +100,6 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
         } else if listInfo.time != nil {
             taskCell.repeatBtn.isHidden = !listInfo.isRepeat
         }
-        
         
         taskCell.titleLbl.text = listInfo.title
         taskCell.descLbl.text = listInfo.note
@@ -158,110 +131,49 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
         taskCell.checkBtn.setImage(listInfo.isCompleted ? UIImage(systemName: "checkmark.circle.fill") : UIImage(systemName: "circle"), for: .normal)
         
         taskCell.checkBtn.addTapGesture {
-            listInfo.isCompleted = !listInfo.isCompleted
-            self.tblView.reloadData()
+            
+            DataBaseManager.shared.markAsCompleted(listInfo)
+            NotificationManager.shared.center.removePendingNotificationRequests(withIdentifiers: [listInfo.timeStamp])
+            DataBaseManager.shared.delete(listInfo)
         }
+        
+        taskCell.descLbl.numberOfLines = 0
+        taskCell.noteHeight.constant = taskCell.descLbl.getHeight()
         
         taskCell.selectionStyle = .none
         return taskCell
         
     }
     
-//    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        // Define the action
-//        
-//        let sectionInfo = todoItems[indexPath.section]
-//        let listInfo = sectionInfo.first?.value[indexPath.row]
-//        let itemsCount = sectionInfo.first?.value.count
-//        
-//        if let itemsCount = itemsCount {
-//            if itemsCount > 5 && (indexPath.row == itemsCount - 1){
-//                return nil
-//            } else {
-//                let pinAction = UIContextualAction(style: .normal, title: "Pin") { (action, view, completionHandler) in
-//                    if let listInfo = listInfo {
-//                        listInfo.isPinned = !listInfo.isPinned
-//                        if listInfo.isPinned {
-//                            if let pinnedIndex = self.todoItems.firstIndex(where: { $0.keys.contains(TASK_KEYS.PINNED.rawValue) }) {
-//                                
-//                                // Add the item to the .PINNED section.
-//                                self.todoItems[pinnedIndex][TASK_KEYS.PINNED.rawValue]?.append(listInfo)
-//                                
-//                                // Remove the item from the current category section.
-//                                switch sectionInfo.keys.first {
-//                                case TASK_KEYS.TODAY.rawValue :
-//                                    self.todoItems[indexPath.section][TASK_KEYS.TODAY.rawValue]?.remove(at: indexPath.row)
-//                                    break
-//                                case TASK_KEYS.TOMORROW.rawValue :
-//                                    self.todoItems[indexPath.section][TASK_KEYS.TOMORROW.rawValue]?.remove(at: indexPath.row)
-//                                    break
-//                                case TASK_KEYS.OVERDUE.rawValue :
-//                                    self.todoItems[indexPath.section][TASK_KEYS.OVERDUE.rawValue]?.remove(at: indexPath.row)
-//                                case TASK_KEYS.ALL.rawValue:
-//                                    self.todoItems[indexPath.section][TASK_KEYS.ALL.rawValue]?.remove(at: indexPath.row)
-//                                    break
-//                                default:
-//                                    break
-//                                }
-//                                
-//                            }
-//                            
-//                        } else {
-//                            
-//                            if let pinnedIndex = self.todoItems.firstIndex(where: { $0.keys.contains(TASK_KEYS.PINNED.rawValue) }) {
-//                                
-//                                // Determine the destination section based on taskDate.
-//                                var destinationSection: TASK_KEYS
-//                                switch checkDate(listInfo.taskDate) {
-//                                case .today:
-//                                    destinationSection = .TODAY
-//                                case .tomorrow:
-//                                    destinationSection = .TOMORROW
-//                                case .other, .week:
-//                                    destinationSection = .ALL
-//                                }
-//                                
-//                                if let index = self.todoItems.firstIndex(where: { $0.keys.contains(destinationSection.rawValue) }) {
-//                                    // Key already exists, append the new task to the array
-//                                    self.todoItems[index][destinationSection.rawValue]?.append(listInfo)
-//                                } else {
-//                                    // Key doesn't exist, create a new dictionary
-//                                    self.todoItems.append([destinationSection.rawValue: [listInfo]])
-//                                }
-//                                
-//                                // Remove the item from the .PINNED section.
-//                                self.todoItems[pinnedIndex][TASK_KEYS.PINNED.rawValue]?.remove(at: indexPath.row)
-//                                
-//                            }
-//                            
-//                            
-//                        }
-//                    }
-//                    
-//                    
-//                    self.view.animate()
-//                    self.tblView.reloadData()
-//                    completionHandler(true)
-//                }
-//                let pinActionText = listInfo!.isPinned ? "Unpin" : "Pin"
-//                let iconName = listInfo!.isPinned ?  "pin.slash.fill" : "pin.fill"
-//                
-//                // Customize the appearance of the delete action (optional)
-//                pinAction.image = swipeLayout(icon: iconName, text: pinActionText, size: 20)
-//                pinAction.backgroundColor = .link
-//                
-//                // Create a configuration with the delete action
-//                let swipeConfiguration = UISwipeActionsConfiguration(actions: [pinAction])
-//                swipeConfiguration.performsFirstActionWithFullSwipe = false
-//                
-//                return swipeConfiguration
-//            }
-//            
-//            
-//        }
-//        return UISwipeActionsConfiguration()
-//        
-//    }
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let listInfo = todoItems[indexPath.row]
+        let vc : AddToDoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddToDoVC") as! AddToDoVC
+        
+        let editAction = UIContextualAction(style: .normal, title: "") { action, view, completionHandler in
+            vc.isEdit = true
+            vc.todoItem = listInfo
+            self.navigationController?.pushViewController(vc, animated: true)
+            completionHandler(true)
+        }
+        
+        editAction.image = swipeLayout(icon: "pencil", text: "Edit", size: 20)
+        editAction.backgroundColor = .link
+        let swipeConfiguration = UISwipeActionsConfiguration(actions: [editAction])
+        swipeConfiguration.performsFirstActionWithFullSwipe = false
+        return swipeConfiguration
+    }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let listInfo = todoItems[indexPath.row]
+        let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completionHandler in
+            DataBaseManager.shared.delete(listInfo)
+            completionHandler(true)
+        }
+        
+        deleteAction.image = swipeLayout(icon: "trash.fill", text: "Delete", size: 20)
+        deleteAction.backgroundColor = .red
+        let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction])
+        swipeConfiguration.performsFirstActionWithFullSwipe = false
+        return swipeConfiguration
+    }
 }
-

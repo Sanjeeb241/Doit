@@ -38,8 +38,8 @@ func getTaskTime(time : Date?) -> String {
 
 func getUTCDateInLocalString(date: Date?) -> Date? {
     let utcDateFormatter = DateFormatter()
-    utcDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
-    utcDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+    utcDateFormatter.dateFormat = "dd-MM-yyyy"
+    utcDateFormatter.timeZone = TimeZone(abbreviation: "GMT")
     if let date = date {
         let utcDateInString = utcDateFormatter.string(from: date)
         
@@ -54,21 +54,22 @@ func getUTCDateInLocalString(date: Date?) -> Date? {
 
 func getUTCTimeInLocalString(date: Date?) -> Date? {
     let utcDateFormatter = DateFormatter()
-    utcDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
-    utcDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+    utcDateFormatter.dateFormat = "h:mm a"
+//    utcDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+    
     if let date = date {
         let utcTimeInString = utcDateFormatter.string(from: date)
         
-        let dateformatter = DateFormatter()
-        dateformatter.dateFormat = "h:mm a"
-        dateformatter.timeZone = .autoupdatingCurrent
-        return dateformatter.date(from: utcTimeInString)
+        let localDateFormatter = DateFormatter()
+        localDateFormatter.dateFormat = "h:mm a"
+        localDateFormatter.timeZone = .autoupdatingCurrent
+        
+        return localDateFormatter.date(from: utcTimeInString)
     } else {
         return nil
     }
-
-
 }
+
 
 func checkDate(_ selectedDate: Date?) -> DateComparison {
     let calendar = Calendar.current
@@ -144,6 +145,7 @@ func getDayOrDateString(from selectedDate: Date?) -> String {
 
 }
 
+// Custom Swipe layout Image and Text
 func swipeLayout(icon: String, text: String, size: CGFloat) -> UIImage {
     let config = UIImage.SymbolConfiguration(pointSize: size, weight: .regular, scale: .large)
     let img = UIImage(systemName: icon, withConfiguration: config)?.withTintColor(.white, renderingMode: .alwaysOriginal)
@@ -169,6 +171,18 @@ func swipeLayout(icon: String, text: String, size: CGFloat) -> UIImage {
     }
 
     return image
+}
+
+
+func getPriorityString(priority : Priority) -> String {
+    switch priority {
+    case .high:
+        return "High"
+    case .normal:
+        return "Normal"
+    case .none:
+        return "None"
+    }
 }
 
 

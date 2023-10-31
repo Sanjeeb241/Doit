@@ -8,12 +8,9 @@
 import Foundation
 
 import RealmSwift
-class ToDoItems : Object {
-    @Persisted var key : String = ""
-    let toDoItems = List<ToDoItem>()
-}
 
 class ToDoItem: Object {
+    @Persisted(primaryKey: true) var id : ObjectId
     @Persisted var key : String = ""
     @Persisted var title: String = ""
     @Persisted var isCompleted: Bool = false
@@ -27,6 +24,8 @@ class ToDoItem: Object {
     @Persisted var categoryName : String = ""
     @Persisted var categoryIcon : String = ""
     @Persisted var categoryId : ObjectId
+    @Persisted var isDetails : Bool = false
+    @Persisted var timeStamp : String = ""
 
     var priority: Priority {
         get {
@@ -37,7 +36,7 @@ class ToDoItem: Object {
         }
     }
     
-    convenience init(key: String, title: String, isCompleted: Bool, note: String, isRepeat: Bool, location: String, taskDate: Date? = nil, time: Date? = nil, taskPriority: Int, isPinned: Bool, categoryName: String, categoryIcon: String, categoryId: ObjectId) {
+    convenience init(key: String, title: String, isCompleted: Bool, note: String, isRepeat: Bool, location: String, taskDate: Date? = nil, time: Date? = nil, taskPriority: Int, isPinned: Bool, categoryName: String, categoryIcon: String, categoryId: ObjectId, timeStamp: String) {
         self.init()
         self.key = key
         self.title = title
@@ -52,12 +51,8 @@ class ToDoItem: Object {
         self.categoryName = categoryName
         self.categoryIcon = categoryIcon
         self.categoryId = categoryId
+        self.timeStamp = timeStamp
     }
-}
-
-class Categories : Object {
-    static let shared = Categories()
-    var categories = List<Category>()
 }
 
 class Category: Object {
