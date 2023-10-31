@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AA400E5F2AF0C32200E21799 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA400E5E2AF0C32200E21799 /* NotificationManager.swift */; };
 		AA400E612AF0E1BF00E21799 /* reminder.m4r in Resources */ = {isa = PBXBuildFile; fileRef = AA400E602AF0E1BF00E21799 /* reminder.m4r */; };
+		AA400E632AF0E9E900E21799 /* ToDoManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA400E622AF0E9E900E21799 /* ToDoManger.swift */; };
 		AA455F322AE6CD1300016054 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA455F312AE6CD1300016054 /* HomeVC.swift */; };
 		AA455F362AE6CE5E00016054 /* ToDoItemsTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA455F342AE6CE5E00016054 /* ToDoItemsTVC.swift */; };
 		AA455F372AE6CE5E00016054 /* ToDoItemsTVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA455F352AE6CE5E00016054 /* ToDoItemsTVC.xib */; };
@@ -38,6 +39,7 @@
 		983A936D7D99823DB595FFA8 /* Pods-Doit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Doit.debug.xcconfig"; path = "Target Support Files/Pods-Doit/Pods-Doit.debug.xcconfig"; sourceTree = "<group>"; };
 		AA400E5E2AF0C32200E21799 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		AA400E602AF0E1BF00E21799 /* reminder.m4r */ = {isa = PBXFileReference; lastKnownFileType = file; path = reminder.m4r; sourceTree = "<group>"; };
+		AA400E622AF0E9E900E21799 /* ToDoManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoManger.swift; sourceTree = "<group>"; };
 		AA455F312AE6CD1300016054 /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
 		AA455F342AE6CE5E00016054 /* ToDoItemsTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemsTVC.swift; sourceTree = "<group>"; };
 		AA455F352AE6CE5E00016054 /* ToDoItemsTVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ToDoItemsTVC.xib; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 			children = (
 				AAE3E0EF2AED494000BD72DB /* DataBaseManager.swift */,
 				AA400E5E2AF0C32200E21799 /* NotificationManager.swift */,
+				AA400E622AF0E9E900E21799 /* ToDoManger.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				AAB7D45B2AE7A46A00AEBFF8 /* Utility.swift in Sources */,
 				AA455F3B2AE6DA4500016054 /* ToDoItems.swift in Sources */,
 				AA59DB2C2AEFE23300AF7A2E /* RemindersVC.swift in Sources */,
+				AA400E632AF0E9E900E21799 /* ToDoManger.swift in Sources */,
 				AA455F392AE6D60900016054 /* AppEnums.swift in Sources */,
 				AA400E5F2AF0C32200E21799 /* NotificationManager.swift in Sources */,
 				AA455F322AE6CD1300016054 /* HomeVC.swift in Sources */,
