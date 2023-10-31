@@ -1,2 +1,2 @@
 # Doit
-A simple To Do app using realm and Fire store.
+A simple To Do/ Reminder app using Realm Storage. 
