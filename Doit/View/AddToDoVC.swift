@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol AddNewTaskDelegate {
-    func didAddNewTask(key : TASK_KEYS, newTask : ToDoItems)
-}
-
 class AddToDoVC: UIViewController {
     
     
@@ -47,7 +43,6 @@ class AddToDoVC: UIViewController {
     
     private var isDateView : Bool = false // Show/Hide date view
     private var isTimeView : Bool = false // Show/Hide time view
-    private var categories : [String] = []
     
     private var taskDate : Date? = nil
     private var taskTime : Date? = nil
@@ -55,9 +50,9 @@ class AddToDoVC: UIViewController {
     private var priority : Priority = .none
     private var category : Category = Category()
     private var isPinned : Bool = false
+    var todoItem : ToDoItem = ToDoItem()
     
-    
-    var delegate : AddNewTaskDelegate?
+    var isEdit : Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,19 +61,14 @@ class AddToDoVC: UIViewController {
     
     
     func setupUI() {
-        self.title = "Details"
-        titleTxt.becomeFirstResponder()
-        noteTxtView.inputAccessoryView = view.addDismissButton(view: noteTxtView)
         
         titleBackView.layer.cornerRadius = 10
         dateTimeBackView.layer.cornerRadius = 10
         priorityBackView.layer.cornerRadius = 10
         repeatView.layer.cornerRadius = 10
-                
-        dateLbl.isHidden = true
-        timePickerView.isHidden = true
-        timeLbl.isHidden = true
-        repeatView.isHidden = true
+        
+        titleTxt.becomeFirstResponder()
+        noteTxtView.inputAccessoryView = view.addDismissButton(view: noteTxtView)
         
         datePickerView.minimumDate = Date()
         timePickerView.minimumDate = Date()
@@ -112,13 +102,53 @@ class AddToDoVC: UIViewController {
 
         }
         
+        if isEdit {
+            title = "Edit Details"
+            titleTxt.text = todoItem.title
+            noteTxtView.text = todoItem.note
+            if let taskDate = todoItem.taskDate {
+                self.taskDate = taskDate
+                datePickerView.date = taskDate
+                dateLbl.isHidden = false
+            }
+
+            if let time = todoItem.time {
+                taskTime = todoItem.time
+                timeLbl.text = getTaskTime(time: todoItem.time)
+                timePickerView.date = time
+                timeSwitchBtn.setOn(true, animated: true)
+                repeatView.isHidden = !todoItem.isRepeat
+                repeatSwitchBtn.setOn(todoItem.isRepeat, animated: true)
+            }
+            priority = todoItem.priority
+            priorityBtn.setTitle(getPriorityString(priority: todoItem.priority), for: .normal)
+            category.id = todoItem.categoryId
+            category.icon = todoItem.categoryIcon
+            category.name = todoItem.categoryName
+            categoryIcon.image = UIImage(systemName: todoItem.categoryIcon)
+            categoryBtn.setTitle(todoItem.categoryName, for: .normal)
+            
+        } else {
+            title = "Details"
+            dateLbl.isHidden = true
+            timeLbl.isHidden = true
+            timePickerView.isHidden = true
+            repeatView.isHidden = true
+        }
+
+        timePickerView.isHidden = true
+        
         dateSwitchBtn.setOn(true, animated: true)
         isDateView = dateSwitchBtn.isOn
         selectDateTime(dateSwitchBtn)
         datePickerView.isHidden = true
         
         setupPriorityInteractionMenu()
-        addNotePlaceholder()
+        if !todoItem.note.isEmpty && isEdit {
+            removePlaceHolder()
+        } else {
+            addNotePlaceholder()
+        }
     }
     
     @objc func datePickerValueChanged(_ datePicker: UIDatePicker) {
@@ -228,13 +258,14 @@ class AddToDoVC: UIViewController {
                 break
             }
             
+            let timestamp = String(format: "%.0f", Date().timeIntervalSince1970)
+            
             let todoItem = ToDoItem()
             todoItem.key = key.rawValue
             todoItem.title = name
             todoItem.isCompleted = false
             todoItem.note = note
             todoItem.isRepeat = isRepeat
-            todoItem.location = ""
             todoItem.taskDate = getUTCDateInLocalString(date: taskDate) ?? taskDate
             todoItem.time = getUTCTimeInLocalString(date: taskTime) ?? taskTime
             todoItem.priority = priority
@@ -242,10 +273,28 @@ class AddToDoVC: UIViewController {
             todoItem.categoryId = category.id
             todoItem.categoryIcon = category.icon
             todoItem.categoryName = category.name
+            todoItem.timeStamp = timestamp
             
-            DataBaseManager.shared.add(todoItem)
-//            self.delegate?.didAddNewTask(key : key, newTask: todoItem)
-            self.navigationController?.popViewController(animated: true)
+            if isEdit {
+                if self.todoItem == todoItem {
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    DataBaseManager.shared.updateToDoItem(self.todoItem, newItem: todoItem)
+                    self.navigationController?.popViewController(animated: true)
+                }
+            } else {
+                DataBaseManager.shared.add(todoItem)
+                if NotificationManager.shared.permissionStatus {
+                    NotificationManager.shared.scheduleLocalNotificationsForToDoItems(todoItem: todoItem)
+                } else {
+                    let alert = UIAlertController(title: "Error", message: "Notification for this Task can't be schedule aas app does not have persmission.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                }
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+
         }
         
         

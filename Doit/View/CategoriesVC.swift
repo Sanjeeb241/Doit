@@ -32,7 +32,9 @@ class CategoriesVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        var addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(clickToAdd))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(clickToAdd))
+        
+        // Hide Bottom Plus Button if categories exceeds limit for better cell visibility
         if categories.count >= 10 || isFromAddTask{
             navigationItem.rightBarButtonItem = addButton
             self.addBtn.isHidden = true
@@ -41,8 +43,11 @@ class CategoriesVC: UIViewController {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    func setupConfig() {
+        title = "Categories"
+        tblView.register(UINib(nibName: TABLEVIEW_CELLS.ViewAllTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue)
+        
+        categories = DataBaseManager.shared.realm.objects(Category.self).sorted(byKeyPath: "name")
         
         notificationToken = categories.observe { [weak self ](changes: RealmCollectionChange) in
             guard let tableView = self?.tblView else { return }
@@ -70,13 +75,6 @@ class CategoriesVC: UIViewController {
                 fatalError("\(error)")
             }
         }
-    }
-    
-    
-    func setupConfig() {
-        title = "Categories"
-        tblView.register(UINib(nibName: TABLEVIEW_CELLS.ViewAllTVC.rawValue, bundle: nil), forCellReuseIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue)
-        categories = DataBaseManager.shared.realm.objects(Category.self).sorted(byKeyPath: "name")
     }
     
     @objc func clickToAdd(){
@@ -107,8 +105,8 @@ extension CategoriesVC : UITableViewDataSource, UITableViewDelegate {
         let cell = tblView.dequeueReusableCell(withIdentifier: TABLEVIEW_CELLS.ViewAllTVC.rawValue, for: indexPath) as! ViewAllTVC
         let listInfo = categories[indexPath.row]
         cell.iconImage.image = UIImage(systemName: listInfo.icon)
-        cell.nameLbl.text = listInfo.name
-        
+        cell.nameLbl.text = listInfo.name + " "
+        cell.arrowBtn.isHidden = true
         cell.selectionStyle = .none
         return cell
     }
@@ -126,7 +124,7 @@ extension CategoriesVC : UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let editAction = UIContextualAction(style: .normal, title: "Edit") { action, view, completionhandler in
+        let editAction = UIContextualAction(style: .normal, title: "") { action, view, completionhandler in
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddCategoryVC") as! AddCategoryVC
             vc.category = self.categories[indexPath.row]
             vc.categories = self.categories

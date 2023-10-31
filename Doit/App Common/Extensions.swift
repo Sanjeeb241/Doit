@@ -22,12 +22,12 @@ extension UIView {
         self.isUserInteractionEnabled = true
     }
     
-    func dismissKeyboard(){
-        self.endEditing(true)
-    }
-    
     @objc public func handleTap(_ sender: TapGestureActionBlock) {
         sender.action!()
+    }
+    
+    func dismissKeyboard(){
+        self.endEditing(true)
     }
 
     func animate() {
@@ -58,9 +58,9 @@ extension UIView {
     
     func showEmptyWarning() {
         // Add border width, will need for Empty warning animation
-        let borderColorKeyPath = "borderColor"
-        
         self.layer.borderWidth = 1
+        
+        let borderColorKeyPath = "borderColor"
 
         // Create a CABasicAnimation for the border color
         let borderColorAnimation = CABasicAnimation(keyPath: borderColorKeyPath)
@@ -81,10 +81,12 @@ extension UIView {
 
         // Apply the animation to the view's layer
         self.layer.add(borderColorAnimation, forKey: "borderColorAnimation")
+        
         // Commit the transaction
         CATransaction.commit()
     }
     
+    // Add a Done button on top of Keyboard to dismiss the keyboard
     func addDismissButton(view : UITextView) -> UIView{
         let doneButton = UIButton(type: .custom)
         doneButton.setTitle("Done", for: .normal)
@@ -108,3 +110,15 @@ extension UIView {
 
 }
 
+extension UILabel {
+    
+    // Get Lable full height
+    func getHeight() -> CGFloat{
+        let label =  UILabel(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: .greatestFiniteMagnitude))
+        label.numberOfLines = self.numberOfLines
+        label.text = self.text
+        label.font = self.font
+        label.sizeToFit()
+        return label.frame.height
+    }
+}

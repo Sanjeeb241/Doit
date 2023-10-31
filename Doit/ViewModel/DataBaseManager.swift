@@ -36,6 +36,36 @@ final class DataBaseManager {
         
     }
     
+    func updateToDoItem(_ oldItem: ToDoItem, newItem: ToDoItem){
+        do {
+            try realm.write {
+                oldItem.id = newItem.id
+                oldItem.key = newItem.key
+                oldItem.title = newItem.title
+                oldItem.taskDate = newItem.taskDate
+                oldItem.isRepeat = newItem.isRepeat
+                oldItem.taskPriority = newItem.taskPriority
+                oldItem.categoryIcon = newItem.categoryIcon
+                oldItem.categoryName = newItem.categoryName
+                oldItem.categoryId = newItem.categoryId
+                oldItem.isCompleted = newItem.isCompleted
+                oldItem.note = newItem.note
+            }
+        } catch {
+            print("There is an error while updating task : \(error)")
+        }
+    }
+    
+    func markAsCompleted(_ item : ToDoItem) {
+        do {
+            try realm.write {
+                item.isCompleted = true
+            }
+        }catch {
+            print("There is an error while completing task : \(error)")
+        }
+    }
+    
     
     
     func updateCategory(_ oldCategory : Category, newCategory: Category){
