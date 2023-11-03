@@ -36,6 +36,29 @@ func getTaskTime(time : Date?) -> String {
     return ""
 }
 
+func getTaskTimeInLocale(time: String) -> Date? {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "h:mm a"
+    dateFormatter.timeZone = .current
+
+    if let timeDate = dateFormatter.date(from: time) {
+        // Get the current date
+        let currentDate = Date()
+
+        // Get the calendar and time components from the current date
+        let calendar = Calendar.current
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: timeDate)
+
+        // Combine the time components with the current date to create a new Date
+        let combinedDate = calendar.date(bySettingHour: timeComponents.hour ?? 0, minute: timeComponents.minute ?? 0, second: 0, of: currentDate)
+
+        return combinedDate
+    } else {
+        return nil
+    }
+}
+
+
 func getUTCDateInLocalString(date: Date?) -> Date? {
     let utcDateFormatter = DateFormatter()
     utcDateFormatter.dateFormat = "dd-MM-yyyy"
@@ -55,20 +78,41 @@ func getUTCDateInLocalString(date: Date?) -> Date? {
 func getUTCTimeInLocalString(date: Date?) -> Date? {
     let utcDateFormatter = DateFormatter()
     utcDateFormatter.dateFormat = "h:mm a"
-//    utcDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+    utcDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
     
     if let date = date {
         let utcTimeInString = utcDateFormatter.string(from: date)
         
         let localDateFormatter = DateFormatter()
         localDateFormatter.dateFormat = "h:mm a"
-        localDateFormatter.timeZone = .autoupdatingCurrent
+        localDateFormatter.locale = .current
+        localDateFormatter.timeZone = .current
         
         return localDateFormatter.date(from: utcTimeInString)
     } else {
         return nil
     }
 }
+
+func getUTCTimeInLocalStringGenral(date: Date?) -> Date? {
+    let utcDateFormatter = DateFormatter()
+    utcDateFormatter.dateFormat = "dd-MM-yyyy h:mm a"
+    utcDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+
+    if let date = date {
+        let utcTimeInString = utcDateFormatter.string(from: date)
+
+        let localDateFormatter = DateFormatter()
+        localDateFormatter.dateFormat = "dd-MM-yyyy h:mm a"
+        localDateFormatter.locale = NSLocale.current
+        localDateFormatter.timeZone = .current
+
+        return localDateFormatter.date(from: utcTimeInString)
+    } else {
+        return nil
+    }
+}
+
 
 
 func checkDate(_ selectedDate: Date?) -> DateComparison {

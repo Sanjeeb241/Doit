@@ -59,6 +59,11 @@ class AddToDoVC: UIViewController {
         setupUI()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        titleTxt.becomeFirstResponder()
+    }
+    
     
     func setupUI() {
         
@@ -67,7 +72,6 @@ class AddToDoVC: UIViewController {
         priorityBackView.layer.cornerRadius = 10
         repeatView.layer.cornerRadius = 10
         
-        titleTxt.becomeFirstResponder()
         noteTxtView.inputAccessoryView = view.addDismissButton(view: noteTxtView)
         
         datePickerView.minimumDate = Date()
@@ -266,8 +270,8 @@ class AddToDoVC: UIViewController {
             todoItem.isCompleted = false
             todoItem.note = note
             todoItem.isRepeat = isRepeat
-            todoItem.taskDate = getUTCDateInLocalString(date: taskDate) ?? taskDate
-            todoItem.time = getUTCTimeInLocalString(date: taskTime) ?? taskTime
+            todoItem.taskDate = taskDate // getUTCDateInLocalString(date: taskDate) ?? taskDate
+            todoItem.time = taskTime // getUTCTimeInLocalStringGenral(date: taskTime) ?? taskTime
             todoItem.priority = priority
             todoItem.isPinned = isPinned
             todoItem.categoryId = category.id

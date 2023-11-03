@@ -10,6 +10,7 @@ import UIKit
 import UserNotifications
 
 final class NotificationManager {
+    
     static let shared = NotificationManager()
     
     var permissionStatus : Bool = false
@@ -30,30 +31,31 @@ final class NotificationManager {
     
     func scheduleLocalNotificationsForToDoItems(todoItem: ToDoItem) {
         
+        let localDate = getUTCTimeInLocalStringGenral(date: todoItem.taskDate)
+        let localTime = getTaskTimeInLocale(time: getTaskTime(time: todoItem.time)) // (date: todoItem.time)
+        
         let content = UNMutableNotificationContent()
-        let localDate = getUTCDateInLocalString(date: todoItem.taskDate)
-        let localTime = getUTCTimeInLocalString(date: todoItem.time)
         content.title = todoItem.title
         content.body = todoItem.note
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "reminder"))
+        content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "reminder.m4r"))
         
         // Set the time at which you want to trigger the notification
         
         let calendar = Calendar.current
-        let dateComponents = calendar.dateComponents([.year, .month, .day], from: localDate ?? Date())
-        let timeComponents = calendar.dateComponents([.hour, .minute], from: localTime ?? Date())
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: todoItem.taskDate ?? Date())
+    
+        var notificationDateComponents = DateComponents()
+        notificationDateComponents.calendar = calendar
+        notificationDateComponents.timeZone = .current
+        notificationDateComponents.day = dateComponents.day
+        notificationDateComponents.hour = Int(getTaskTime(time: todoItem.time).components(separatedBy: ":")[0])
+        notificationDateComponents.minute = Int(getTaskTime(time: todoItem.time).components(separatedBy: ":")[1])
         
-        var combinedComponents = DateComponents()
-        combinedComponents.year = dateComponents.year
-        combinedComponents.month = dateComponents.month
-        combinedComponents.day = dateComponents.day
-        combinedComponents.hour = timeComponents.hour
-        combinedComponents.minute = timeComponents.minute
+        let trigger = UNCalendarNotificationTrigger(dateMatching: notificationDateComponents, repeats: todoItem.isRepeat)
         
-        let trigger = UNCalendarNotificationTrigger(dateMatching: combinedComponents, repeats: todoItem.isRepeat)
         
         let request = UNNotificationRequest(identifier: todoItem.timeStamp, content: content, trigger: trigger)
-        
+        let center = UNUserNotificationCenter.current()
         center.add(request) { (error) in
             if let error = error {
                 print("Error scheduling notification: \(error.localizedDescription)")
