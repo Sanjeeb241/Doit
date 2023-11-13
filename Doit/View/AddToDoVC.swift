@@ -178,7 +178,7 @@ class AddToDoVC: UIViewController {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "h:mm a"
             self.timeLbl.text = dateFormatter.string(from: timePickerView.date)
-            self.taskTime = datePicker.date
+            self.taskTime = timePickerView.date
         }
     }
 
@@ -280,18 +280,14 @@ class AddToDoVC: UIViewController {
             todoItem.timeStamp = timestamp
             
             if isEdit {
-                if self.todoItem == todoItem {
-                    self.navigationController?.popViewController(animated: true)
-                } else {
-                    DataBaseManager.shared.updateToDoItem(self.todoItem, newItem: todoItem)
-                    self.navigationController?.popViewController(animated: true)
-                }
+                DataBaseManager.shared.updateToDoItem(self.todoItem, newItem: todoItem)
+                self.navigationController?.popViewController(animated: true)
             } else {
                 DataBaseManager.shared.add(todoItem)
                 if NotificationManager.shared.permissionStatus {
                     NotificationManager.shared.scheduleLocalNotificationsForToDoItems(todoItem: todoItem)
                 } else {
-                    let alert = UIAlertController(title: "Error", message: "Notification for this Task can't be schedule aas app does not have persmission.", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Error", message: "Notification for this Task can't be schedule as app does not have persmission.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                     self.present(alert, animated: true)
                 }

@@ -39,10 +39,10 @@ final class DataBaseManager {
     func updateToDoItem(_ oldItem: ToDoItem, newItem: ToDoItem){
         do {
             try realm.write {
-                oldItem.id = newItem.id
                 oldItem.key = newItem.key
                 oldItem.title = newItem.title
                 oldItem.taskDate = newItem.taskDate
+                oldItem.time = newItem.time
                 oldItem.isRepeat = newItem.isRepeat
                 oldItem.taskPriority = newItem.taskPriority
                 oldItem.categoryIcon = newItem.categoryIcon
@@ -60,6 +60,10 @@ final class DataBaseManager {
         do {
             try realm.write {
                 item.isCompleted = true
+                if item.isRepeat {
+                    item.isCompleted = false
+                    item.taskDate = Calendar.current.date(byAdding: .day, value: 1, to: Date())
+                }
             }
         }catch {
             print("There is an error while completing task : \(error)")

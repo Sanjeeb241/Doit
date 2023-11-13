@@ -90,6 +90,7 @@ extension UIView {
     func addDismissButton(view : UITextView) -> UIView{
         let doneButton = UIButton(type: .custom)
         doneButton.setTitle("Done", for: .normal)
+        doneButton.tintColor = .link
         
         doneButton.addTapGesture {
             view.resignFirstResponder()

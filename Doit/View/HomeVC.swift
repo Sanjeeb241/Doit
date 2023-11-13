@@ -130,11 +130,24 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
         taskCell.repeatBtn.setImage(listInfo.isRepeat ? UIImage(systemName: "repeat") : UIImage(systemName: "repeat"), for: .normal)
         taskCell.checkBtn.setImage(listInfo.isCompleted ? UIImage(systemName: "checkmark.circle.fill") : UIImage(systemName: "circle"), for: .normal)
         
+        
+        
+        
         taskCell.checkBtn.addTapGesture {
             
-            DataBaseManager.shared.markAsCompleted(listInfo)
-            NotificationManager.shared.center.removePendingNotificationRequests(withIdentifiers: [listInfo.timeStamp])
-            DataBaseManager.shared.delete(listInfo)
+            UIView.animate(withDuration: 0.35) {
+                DataBaseManager.shared.markAsCompleted(listInfo)
+                taskCell.contentView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            }completion: { _ in
+                taskCell.contentView.transform = .identity
+            }
+            
+            if !listInfo.isRepeat {
+                NotificationManager.shared.center.removePendingNotificationRequests(withIdentifiers: [listInfo.timeStamp])
+                DataBaseManager.shared.delete(listInfo)
+                
+            }
+            
         }
         
         taskCell.descLbl.numberOfLines = 0
@@ -166,6 +179,7 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let listInfo = todoItems[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "") { action, view, completionHandler in
+            NotificationManager.shared.center.removePendingNotificationRequests(withIdentifiers: [listInfo.timeStamp])
             DataBaseManager.shared.delete(listInfo)
             completionHandler(true)
         }
